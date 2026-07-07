@@ -399,3 +399,23 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# .NET
+bin/
+obj/
+.vs/
+
+# Angular
+node_modules/
+dist/
+.angular/
+
+# IDE
+.idea/
+
+# Logs
+*.log
+
+# Secrets
+.env
+appsettings.Development.json
