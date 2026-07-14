@@ -1,0 +1,38 @@
+<div class="min-h-screen bg-slate-950">
+  <app-banner-section />
+
+  <div class="flex flex-col gap-y-12">
+    <app-popular-section />
+    <app-now-playing-section />
+    <div class="relative h-[50vh]">
+      <img
+        class="absolute inset-0 w-full h-full object-cover object-[50%_30%]"
+        src="../../assets/landpage/6964c788c3464b61e081d6d4_golden-globes-2026.webp"
+        alt="Golden Globes 2026"
+      />
+      <div class="absolute inset-0">
+        <!-- Top -->
+        <div
+          class="absolute top-0 left-0 right-0 h-12 bg-linear-to-b from-slate-950 via-slate-950/60 to-transparent"
+        ></div>
+
+        <!-- Bottom -->
+        <div
+          class="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-slate-950 via-slate-950/6 to-transparent"
+        ></div>
+
+        <!-- Left -->
+        <div
+          class="absolute left-0 top-0 bottom-0 w-12 bg-linear-to-r from-slate-950/60 to-transparent"
+        ></div>
+
+        <!-- Right -->
+        <div
+          class="absolute right-0 top-0 bottom-0 w-12 bg-linear-to-l from-slate-950/60 to-transparent"
+        ></div>
+      </div>
+    </div>
+    <app-top-rated-section />
+    <app-up-coming-section />
+  </div>
+</div>

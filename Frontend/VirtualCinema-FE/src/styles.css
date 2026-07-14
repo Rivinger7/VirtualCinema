@@ -1,3 +1,48 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+@import 'tailwindcss-primeui';
+
+/* ===== CAROUSEL START ===== */
+.movie-carousel {
+  position: relative;
+}
+
+/* indicator */
+.movie-carousel .p-carousel-indicator-button {
+  width: 12px;
+
+  height: 12px;
+
+  border-radius: 9999px;
+}
+
+.movie-carousel .p-carousel-prev-button,
+.movie-carousel .p-carousel-next-button {
+  position: absolute;
+  top: -60px;
+  z-index: 20;
+
+  /* width: 40px;
+  height: 40px; */
+
+  border-radius: 2000px;
+  background-color: rgb(24 24 27);
+  color: white;
+}
+
+.movie-carousel .p-carousel-prev-button {
+  left: auto;
+  right: 90px;
+}
+
+.movie-carousel .p-carousel-next-button {
+  right: 35px;
+}
+
+.movie-carousel .p-carousel-prev-button:hover,
+.movie-carousel .p-carousel-next-button:hover {
+  background-color: rgb(39 39 42);
+}
+/* ===== CAROUSEL END ===== */

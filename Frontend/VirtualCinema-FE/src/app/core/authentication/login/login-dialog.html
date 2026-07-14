@@ -1,0 +1,90 @@
+<mat-dialog-content class="overflow-hidden rounded-2xl">
+  <div class="flex flex-1 flex-col px-6 py-8">
+    <h1 class="text-2xl text-zinc-300 font-bold">Welcome back</h1>
+    <span class="text-zinc-400 text-sm">Login to your account</span>
+    <div class="flex flex-1 flex-row justify-around gap-x-4 text-sm font-medium text-zinc-300 mt-8">
+      <button
+        class="flex flex-1 flex-row items-center justify-center gap-x-2 rounded-lg bg-zinc-800 px-2 py-2 text-zinc-300 hover:bg-zinc-700 transition-all duration-200 select-none hover:cursor-pointer"
+      >
+        <img
+          class="w-6 object-contain"
+          src="../../../assets/logo/icons8-google-windows-11-color/icons8-google-96.png"
+          alt="Google Icon"
+        />
+        <span>Login with Google</span>
+      </button>
+      <button
+        class="flex flex-1 flex-row items-center justify-center gap-x-2 rounded-lg bg-zinc-800 px-2 py-1 text-zinc-300 hover:bg-zinc-700 transition-all duration-200 select-none hover:cursor-pointer"
+      >
+        <img
+          class="w-6 object-contain"
+          src="../../../assets/logo/icons8-facebook-color/icons8-facebook-96.png"
+          alt="Facebook Icon"
+        />
+        <span>Login with Facebook</span>
+      </button>
+    </div>
+    <div class="flex items-center gap-x-4 mt-8 select-none">
+      <div class="h-px flex-1 bg-zinc-600"></div>
+      <span class="text-zinc-200 text-sm font-medium">OR</span>
+      <div class="h-px flex-1 bg-zinc-600"></div>
+    </div>
+    <form class="" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="mt-8 space-y-10!">
+        <p-floatlabel>
+          <p-iconfield>
+            <input
+              class="w-full bg-transparent text-zinc-300 border-none! rounded-xl!"
+              pInputText
+              type="email"
+              formControlName="email"
+              id="email-input"
+              autocomplete="off"
+            />
+            <label class="select-none" for="email-input">Email</label>
+          </p-iconfield>
+        </p-floatlabel>
+        <p-floatlabel>
+          <p-iconfield iconPosition="right">
+            <input
+              class="w-full bg-transparent text-zinc-300 border-none! rounded-xl!"
+              pInputText
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              id="password-input"
+              autocomplete="off"
+            />
+            <p-inputicon>
+              <button class="cursor-pointer" (click)="showPassword = !showPassword" type="button">
+                <lucide-icon
+                  class="text-zinc-400 absolute right-2 transform translate-y-[-75%]"
+                  [img]="showPassword ? eyeIcon : eyeOffIcon"
+                ></lucide-icon>
+              </button>
+            </p-inputicon>
+            <label class="select-none" for="password-input">Password</label>
+          </p-iconfield>
+        </p-floatlabel>
+      </div>
+      <div class="flex flex-1 justify-center w-full mt-10">
+        <button
+          class="w-full rounded-2xl"
+          severity="info"
+          pButton
+          label="Login"
+          type="submit"
+        ></button>
+      </div>
+    </form>
+    <div class="mt-6 text-zinc-500 text-sm">
+      <span
+        >Don't have an account?
+        <a
+          class="text-zinc-300 font-medium underline hover:text-white transition-all duration-300"
+          href=""
+          >Register</a
+        ></span
+      >
+    </div>
+  </div>
+</mat-dialog-content>

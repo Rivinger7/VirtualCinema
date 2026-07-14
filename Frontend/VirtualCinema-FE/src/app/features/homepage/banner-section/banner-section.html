@@ -1,0 +1,45 @@
+<section class="relative h-[76vh] overflow-hidden">
+  <!-- Background Image -->
+  <img
+    [src]="'https://image.tmdb.org/t/p/original' + latestMovie()?.backdrop_path"
+    class="absolute inset-0 w-full object-cover"
+  />
+
+  <!-- Overlay Left -->
+  <div class="absolute inset-0 bg-linear-to-r from-black via-black/60 to-transparent"></div>
+
+  <!-- Overlay Bottom -->
+  <div
+    class="absolute inset-x-0 bottom-0 h-100 bg-linear-to-t from-slate-950 via-slate-950/80 to-transparent"
+  ></div>
+
+  <!-- Content -->
+  <div class="absolute z-10 bottom-20 left-15 w-[45%] flex flex-col gap-y-4">
+    <div class="flex flex-col gap-y-2">
+      <h1 class="text-4xl font-bold text-zinc-300">{{ latestMovie()?.title }}</h1>
+      <p class="text-zinc-300 text-lg">
+        {{ latestMovie()?.overview }}
+      </p>
+      <div class="flex flex-row items-center gap-x-4">
+        <p-rating
+          class="custom-rating"
+          [ngModel]="((latestMovie()?.vote_average ?? 0) * 5) / 10"
+          [readonly]="true"
+        ></p-rating>
+        <span class="text-zinc-300 text-lg">
+          ({{ (((latestMovie()?.vote_average ?? 0) * 5) / 10).toFixed(1) }}/5)
+        </span>
+      </div>
+    </div>
+    <div class="flex flex-row items-center gap-x-4">
+      <button class="px-3! py-1.5!" pButton rounded severity="info">
+        <lucide-icon class="relative fill-black size-4" [img]="playIcon" />
+        <span class="font-medium">Watch Trailer</span>
+      </button>
+      <button class="border border-sky-500! bg-transparent! px-3! py-1.5!" pButton rounded>
+        <span class="text-zinc-300 font-medium">More Info</span>
+        <lucide-icon class="relative stroke-zinc-300 size-4" [img]="infoIcon"></lucide-icon>
+      </button>
+    </div>
+  </div>
+</section>
