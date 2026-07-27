@@ -3,6 +3,7 @@ import { CarouselModule } from 'primeng/carousel';
 import { MovieCard } from '../../../shared/components/cards/movie-card/movie-card';
 import { MovieService } from '../../../core/services/Movies/movie-service';
 import { MovieResultItem } from '@lorenzopant/tmdb';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-popular-section',
@@ -10,7 +11,8 @@ import { MovieResultItem } from '@lorenzopant/tmdb';
   templateUrl: './popular-section.html',
 })
 export class PopularSection implements OnInit {
-  movieService = inject(MovieService);
+  private readonly movieService = inject(MovieService);
+  private readonly router = inject(Router);
 
   popularMovies = signal<MovieResultItem[]>([]);
 
@@ -22,5 +24,10 @@ export class PopularSection implements OnInit {
     const response = await this.movieService.getPopularMovies(page);
 
     this.popularMovies.set(response.results);
+  }
+
+  selectMovie(id: number, title: string) {
+    const slug = title.toLocaleLowerCase().replaceAll(' ', '-');
+    this.router.navigate(['/movie', id, slug]);
   }
 }

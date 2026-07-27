@@ -1,14 +1,15 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { inject, OnInit } from '@angular/core';
 import { PaginatedResponse, TVSeriesResultItem } from '@lorenzopant/tmdb';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TVShowService } from '../../core/services/TVShows/tvshow-service';
 import { TvShowCard } from '../../shared/components/cards/tv-show-card/tv-show-card';
 
 @Component({
   selector: 'app-tv-show',
-  imports: [PaginatorModule, TvShowCard],
+  imports: [PaginatorModule, TvShowCard, SkeletonModule],
   templateUrl: './tv-show.html',
 })
 export class TvShow implements OnInit {
@@ -16,6 +17,7 @@ export class TvShow implements OnInit {
   private tvShowService = inject(TVShowService);
 
   tvShows = signal<PaginatedResponse<TVSeriesResultItem> | undefined>(undefined);
+  readonly isLoading = signal(true);
 
   genreName = signal('');
 
@@ -28,24 +30,29 @@ export class TvShow implements OnInit {
       const genreSlug = params.get('genre');
 
       if (!genreSlug) {
-        console.log('No genre slug');
+        this.isLoading.set(false);
         return;
       }
 
+      this.isLoading.set(true);
       this.genreName.set(genreSlug);
 
-      const genreId = await this.getGenreIdFromSlug(genreSlug);
+      try {
+        const genreId = await this.getGenreIdFromSlug(genreSlug);
 
-      if (!genreId) {
-        console.log('No genre id');
-        return;
+        if (!genreId) {
+          this.isLoading.set(false);
+          return;
+        }
+
+        this.currentPage.set(1);
+        this.genreId = genreId;
+        const tvShows = await this.tvShowService.getTVShowsByGenre(genreId);
+
+        this.tvShows.set(tvShows);
+      } finally {
+        this.isLoading.set(false);
       }
-
-      this.currentPage.set(1);
-      this.genreId = genreId;
-      const tvShows = await this.tvShowService.getTVShowsByGenre(genreId);
-
-      this.tvShows.set(tvShows);
     });
   }
   private async getGenreIdFromSlug(slug: string) {
@@ -58,9 +65,14 @@ export class TvShow implements OnInit {
   currentPage = signal(1);
   genreId!: number;
   private async loadTVShows() {
-    const movies = await this.tvShowService.getTVShowsByGenre(this.genreId, this.currentPage());
+    this.isLoading.set(true);
 
-    this.tvShows.set(movies);
+    try {
+      const movies = await this.tvShowService.getTVShowsByGenre(this.genreId, this.currentPage());
+      this.tvShows.set(movies);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   Math = Math;

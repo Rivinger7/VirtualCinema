@@ -1,27 +1,49 @@
 <div class="min-h-screen bg-slate-950">
   <div class="px-10 pt-50 pb-10 space-y-6">
     <div class="flex justify-center">
-      <p-paginator
-        class="bg-slate-950!"
-        (onPageChange)="onPageChange($event)"
-        [first]="first"
-        [rows]="rows"
-        [totalRecords]="Math.min((movies()?.total_pages ?? 0) * rows, 500 * rows)"
-      />
-    </div>
-    <div class="grid grid-cols-5 gap-4">
-      @for (movie of movies()?.results; track movie.id) {
-        <app-movie-card [movie]="movie" (click)="selectMovie(movie.id, movie.title)" />
+      @if (isLoading()) {
+        <p-skeleton height="3rem" width="24rem" />
+      } @else {
+        <p-paginator
+          class="bg-slate-950!"
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="Math.min((movies()?.total_pages ?? 0) * rows, 500 * rows)"
+        />
       }
     </div>
+
+    @if (isLoading()) {
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-5">
+        @for (_ of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track $index) {
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+            <p-skeleton height="18rem" class="w-full" />
+            <p-skeleton height="1rem" class="mt-4 w-3/4" />
+            <p-skeleton height="1rem" class="mt-2 w-1/2" />
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="grid grid-cols-5 gap-4">
+        @for (movie of movies()?.results; track movie.id) {
+          <app-movie-card [movie]="movie" (click)="selectMovie(movie.id, movie.title)" />
+        }
+      </div>
+    }
+
     <div class="flex justify-center">
-      <p-paginator
-        class="bg-slate-950!"
-        (onPageChange)="onPageChange($event)"
-        [first]="first"
-        [rows]="rows"
-        [totalRecords]="Math.min((movies()?.total_pages ?? 0) * rows, 500 * rows)"
-      />
+      @if (isLoading()) {
+        <p-skeleton height="3rem" width="24rem" />
+      } @else {
+        <p-paginator
+          class="bg-slate-950!"
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="Math.min((movies()?.total_pages ?? 0) * rows, 500 * rows)"
+        />
+      }
     </div>
   </div>
 </div>

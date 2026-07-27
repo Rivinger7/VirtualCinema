@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MovieService } from '../../core/services/Movies/movie-service';
 import { ActivatedRoute } from '@angular/router';
 import { MovieAppendToResponseNamespace, MovieDetailsWithAppends } from '@lorenzopant/tmdb';
@@ -10,6 +10,10 @@ import { LucideAngularModule, Play, Info } from 'lucide-angular';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MovieCard } from '../../shared/components/cards/movie-card/movie-card';
+import { SkeletonModule } from 'primeng/skeleton';
+import { ImageModule } from 'primeng/image';
+import { MatDialog } from '@angular/material/dialog';
+import { TrailerDialog } from '../../shared/components/dialogs/trailer-dialog/trailer-dialog';
 
 @Component({
   selector: 'app-movie-detail',
@@ -21,6 +25,8 @@ import { MovieCard } from '../../shared/components/cards/movie-card/movie-card';
     DatePipe,
     CarouselModule,
     MovieCard,
+    SkeletonModule,
+    ImageModule,
   ],
   templateUrl: './movie-detail.html',
 })
@@ -31,10 +37,12 @@ export class MovieDetail implements OnInit {
   private readonly movieService = inject(MovieService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   movieDetail = signal<
-    MovieDetailsWithAppends<['images', 'credits', 'recommendations']> | undefined
+    MovieDetailsWithAppends<['images', 'credits', 'recommendations', 'videos']> | undefined
   >(undefined);
+  readonly isLoading = signal(true);
 
   routerCategoryName = 'movie';
   runtime = computed(() => {
@@ -49,6 +57,11 @@ export class MovieDetail implements OnInit {
   recommendedMovies = computed(
     () => this.movieDetail()?.recommendations.results.slice(0, 20) ?? [],
   );
+  trailer = computed(() => {
+    return this.movieDetail()?.videos.results.find(
+      (video) => video.site === 'YouTube' && video.type === 'Trailer',
+    );
+  });
 
   async ngOnInit() {
     this.registerRouter();
@@ -70,33 +83,33 @@ export class MovieDetail implements OnInit {
     });
   }
 
-  constructor() {
-    effect(() => {
-      console.log(this.movieDetail());
-      console.log(this.movieDetail()?.images);
-    });
-  }
-
   private async getMovieDetails(movieId: number) {
-    const appendResponse: MovieAppendToResponseNamespace[] = [
-      'images',
-      'credits',
-      'recommendations',
-    ];
+    this.isLoading.set(true);
 
-    const movie = await this.movieService.getMovieDetailsWithAppendResponseNamespace(
-      movieId,
-      appendResponse,
-    );
+    try {
+      const appendResponse: MovieAppendToResponseNamespace[] = [
+        'images',
+        'credits',
+        'recommendations',
+        'videos',
+      ];
 
-    movie.images = {
-      ...movie.images,
-      posters: movie.images.posters.slice(0, 10),
-      backdrops: movie.images.backdrops.slice(0, 10),
-      logos: movie.images.logos.slice(0, 10),
-    };
+      const movie = await this.movieService.getMovieDetailsWithAppendResponseNamespace(
+        movieId,
+        appendResponse,
+      );
 
-    this.movieDetail.set(movie);
+      movie.images = {
+        ...movie.images,
+        posters: movie.images.posters.slice(0, 10),
+        backdrops: movie.images.backdrops.slice(0, 10),
+        logos: movie.images.logos.slice(0, 10),
+      };
+
+      this.movieDetail.set(movie);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   selectGenre(genreName: string) {
@@ -107,5 +120,14 @@ export class MovieDetail implements OnInit {
   selectRecommendedMovie(id: number, title: string) {
     const slug = title.toLocaleLowerCase().replaceAll(' ', '-');
     this.router.navigate(['/movie', id, slug]);
+  }
+
+  openTrailer() {
+    this.dialog.open(TrailerDialog, {
+      width: '960px',
+      maxWidth: '90vw',
+      panelClass: 'trailer-dialog',
+      data: this.trailer()?.key,
+    });
   }
 }

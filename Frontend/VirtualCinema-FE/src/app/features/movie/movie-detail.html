@@ -1,186 +1,235 @@
-<div class="min-h-screen bg-slate-950">
-  <section class="relative h-[76vh] overflow-hidden">
-    <!-- Background Image -->
-    <img
-      [src]="'https://image.tmdb.org/t/p/original' + movieDetail()?.backdrop_path"
-      class="absolute inset-0 w-full object-cover"
-    />
+@if (movieDetail() && !isLoading()) {
+  <div class="min-h-screen bg-slate-950">
+    <section class="relative h-[76vh] overflow-hidden">
+      <img
+        [src]="'https://image.tmdb.org/t/p/original' + movieDetail()?.backdrop_path"
+        class="absolute inset-0 w-full object-cover cursor-pointer"
+      />
 
-    <!-- Overlay Left -->
-    <div class="absolute inset-0 bg-linear-to-r from-black via-black/60 to-transparent"></div>
+      <div class="absolute inset-0 bg-linear-to-r from-black via-black/60 to-transparent"></div>
 
-    <!-- Overlay Bottom -->
-    <div
-      class="absolute inset-x-0 bottom-0 h-100 bg-linear-to-t from-slate-950 via-slate-950/80 to-transparent"
-    ></div>
+      <div
+        class="absolute inset-x-0 bottom-0 h-100 bg-linear-to-t from-slate-950 via-slate-950/80 to-transparent"
+      ></div>
 
-    <!-- Content -->
-    <div class="absolute z-10 bottom-20 left-15 w-[45%] flex flex-col gap-y-4">
-      <div class="flex flex-col gap-y-2">
-        <h1 class="text-6xl font-bold text-zinc-300">{{ movieDetail()?.title }}</h1>
-        <div class="flex flex-row items-center gap-x-4">
-          <p class="text-zinc-300 text-xl">
-            {{ runtime() }} • {{ movieDetail()?.release_date | date: 'dd/MM/yyyy' }} •
-            {{ movieDetail()?.origin_country }}
-          </p>
-        </div>
-        <div class="flex flex-row items-center gap-x-4">
-          <p-rating
-            class="custom-rating"
-            [ngModel]="((movieDetail()?.vote_average ?? 0) * 5) / 10"
-            [readonly]="true"
-          ></p-rating>
-          <span class="text-zinc-300 text-lg">
-            ({{ (((movieDetail()?.vote_average ?? 0) * 5) / 10).toFixed(1) }}/5)
-          </span>
-        </div>
-      </div>
-      <div class="flex flex-row items-center gap-x-4">
-        <button class="px-3! py-1.5! rounded-sm" pButton severity="info">
-          <lucide-icon class="relative fill-white text-white size-4" [img]="playIcon" />
-          <span class="text-white font-medium">Watch Trailer</span>
-        </button>
-        <button class="border border-sky-500! bg-transparent! px-3! py-1.5!" pButton>
-          <span class="text-zinc-300 font-medium">More Info</span>
-          <lucide-icon class="relative stroke-zinc-300 size-4" [img]="infoIcon"></lucide-icon>
-        </button>
-      </div>
-    </div>
-  </section>
-  <div class="w-full px-10 -mt-8">
-    <p-carousel
-      class="movie-carousel"
-      [value]="movieDetail()?.images?.backdrops || []"
-      [numVisible]="6"
-      [numScroll]="3"
-      [circular]="true"
-      [autoplayInterval]="6000"
-    >
-      <ng-template let-backdrops pTemplate="item">
-        <div class="flex flex-col gap-y-2 w-full cursor-pointer p-2">
-          <div class="group relative overflow-hidden rounded-xl border border-sky-400">
-            <img
-              class="aspect-square object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-50"
-              [title]="movieDetail()?.title"
-              [src]="'https://image.tmdb.org/t/p/w500' + backdrops.file_path"
-              [alt]="movieDetail()?.title"
-            />
-            <div
-              class="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black via-black/60 to-transparent"
-            ></div>
+      <div class="absolute z-10 bottom-20 left-15 w-[45%] flex flex-col gap-y-4">
+        <div class="flex flex-col gap-y-2">
+          <h1 class="text-6xl font-bold text-zinc-300">{{ movieDetail()?.title }}</h1>
+          <div class="flex flex-row items-center gap-x-4">
+            <p class="text-zinc-300 text-xl">
+              {{ runtime() }} • {{ movieDetail()?.release_date | date: 'dd/MM/yyyy' }} •
+              {{ movieDetail()?.origin_country }}
+            </p>
+          </div>
+          <div class="flex flex-row items-center gap-x-4">
+            <p-rating
+              class="custom-rating"
+              [ngModel]="((movieDetail()?.vote_average ?? 0) * 5) / 10"
+              [readonly]="true"
+            ></p-rating>
+            <span class="text-zinc-300 text-lg">
+              ({{ (((movieDetail()?.vote_average ?? 0) * 5) / 10).toFixed(1) }}/5)
+            </span>
           </div>
         </div>
-      </ng-template>
-    </p-carousel>
-  </div>
-  <div class="flex flex-col gap-y-8 px-10 pb-8">
-    <div class="flex flex-col gap-y-4">
-      <p class="text-white text-4xl font-bold">About {{ movieDetail()?.title }}</p>
-      <p class="text-slate-300 text-2xl">{{ movieDetail()?.overview }}</p>
-    </div>
-    <div class="flex flex-col gap-y-4">
-      <p class="text-white text-4xl font-bold">Genres</p>
-      <div class="flex flex-row gap-x-3">
-        @for (genre of movieDetail()?.genres; track genre.id) {
-          <button
-            class="rounded-full border bg-cyan-600 border-zinc-700 px-4 py-2 text-sm text-white whitespace-nowrap hover:cursor-pointer hover:bg-cyan-500"
-            (click)="selectGenre(genre.name)"
-          >
-            {{ genre.name }}
+        <div class="flex flex-row items-center gap-x-4">
+          <button class="px-3! py-1.5! rounded-sm" pButton severity="info" (click)="openTrailer()">
+            <lucide-icon class="relative fill-white text-white size-4" [img]="playIcon" />
+            <span class="text-white font-medium">Watch Trailer</span>
           </button>
-        }
+          <button class="border border-sky-500! bg-transparent! px-3! py-1.5!" pButton>
+            <span class="text-zinc-300 font-medium">More Info</span>
+            <lucide-icon class="relative stroke-zinc-300 size-4" [img]="infoIcon"></lucide-icon>
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="flex flex-col gap-y-4">
-      <p class="text-white text-4xl font-bold">Charactors</p>
-      <div class="w-full">
-        <p-carousel
-          class="movie-carousel"
-          [value]="movieDetail()?.credits?.cast?.slice(0, 50) || []"
-          [numVisible]="6"
-          [numScroll]="3"
-          [circular]="true"
-          [autoplayInterval]="6000"
-        >
-          <ng-template let-cast pTemplate="item">
-            <div class="flex flex-col items-center gap-y-2 w-full py-2">
-              <div
-                class="flex flex-col items-center group size-25 relative aspect-square overflow-hidden rounded-full"
-              >
-                <img
-                  class="size-25 rounded-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-50"
-                  [title]="cast.character"
-                  [src]="
-                    cast.profile_path
-                      ? 'https://image.tmdb.org/t/p/w500' + cast.profile_path
-                      : 'https://ps.w.org/colorlib-404-customizer/assets/icon-256x256.jpg?rev=1985325'
-                  "
-                  [alt]="cast.character"
-                />
-              </div>
-              <div class="flex flex-col items-center truncate">
-                <p class="hover:underline hover:underline-offset-4 hover:cursor-pointer">
-                  {{ cast.name }}
-                </p>
-                <p>({{ cast.character }})</p>
-              </div>
-            </div>
-          </ng-template>
-        </p-carousel>
-      </div>
-    </div>
-    <div class="flex flex-col gap-y-4">
-      <p class="text-white text-4xl font-bold">Crews</p>
-      <div class="w-full">
-        <p-carousel
-          class="movie-carousel"
-          [value]="movieDetail()?.credits?.crew?.slice(0, 50) || []"
-          [numVisible]="6"
-          [numScroll]="3"
-          [circular]="true"
-          [autoplayInterval]="6000"
-        >
-          <ng-template let-cast pTemplate="item">
-            <div class="flex flex-col items-center gap-y-2 w-full py-2">
-              <div
-                class="flex flex-col items-center group size-25 relative aspect-square overflow-hidden rounded-full"
-              >
-                <img
-                  class="size-25 rounded-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-50"
-                  [title]="cast.character"
-                  [src]="
-                    cast.profile_path
-                      ? 'https://image.tmdb.org/t/p/w500' + cast.profile_path
-                      : 'https://ps.w.org/colorlib-404-customizer/assets/icon-256x256.jpg?rev=1985325'
-                  "
-                  [alt]="cast.character"
-                />
-              </div>
-              <div class="flex flex-col items-center truncate">
-                <p class="hover:underline hover:underline-offset-4 hover:cursor-pointer">
-                  {{ cast.name }}
-                </p>
-                <p>({{ cast.known_for_department }})</p>
-              </div>
-            </div>
-          </ng-template>
-        </p-carousel>
-      </div>
-    </div>
-    <div class="flex flex-col gap-y-4">
-      <p class="text-white text-4xl font-bold">Suggestion like "{{ movieDetail()?.title }}"</p>
+    </section>
+    <div class="w-full px-10 -mt-8">
       <p-carousel
         class="movie-carousel"
-        [value]="recommendedMovies()"
+        [value]="movieDetail()?.images?.backdrops || []"
         [numVisible]="6"
         [numScroll]="3"
         [circular]="true"
         [autoplayInterval]="6000"
       >
-        <ng-template let-movie pTemplate="item">
-          <app-movie-card [movie]="movie" (click)="selectRecommendedMovie(movie.id, movie.title)" />
+        <ng-template let-backdrops pTemplate="item">
+          <div class="flex flex-col gap-y-2 w-full cursor-pointer p-2">
+            <div
+              class="group relative overflow-hidden rounded-xl border border-sky-400 aspect-square w-full"
+            >
+              <p-image
+                class="block w-full h-full"
+                [src]="'https://image.tmdb.org/t/p/w500' + backdrops.file_path"
+                [alt]="movieDetail()?.title ?? 'Movie backdrop'"
+                [preview]="true"
+                [appendTo]="'body'"
+                [previewImageSrc]="'https://image.tmdb.org/t/p/w780' + backdrops.file_path"
+                width="280"
+                height="280"
+                imageClass="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-50 cursor-pointer"
+              />
+            </div>
+          </div>
         </ng-template>
       </p-carousel>
     </div>
+    <div class="flex flex-col gap-y-8 px-10 pb-8">
+      <div class="flex flex-col gap-y-4">
+        <p class="text-white text-4xl font-bold">About {{ movieDetail()?.title }}</p>
+        <p class="text-slate-300 text-2xl">{{ movieDetail()?.overview }}</p>
+      </div>
+      <div class="flex flex-col gap-y-4">
+        <p class="text-white text-4xl font-bold">Genres</p>
+        <div class="flex flex-row gap-x-3">
+          @for (genre of movieDetail()?.genres; track genre.id) {
+            <button
+              class="rounded-full border bg-cyan-600 border-zinc-700 px-4 py-2 text-sm text-white whitespace-nowrap hover:cursor-pointer hover:bg-cyan-500"
+              (click)="selectGenre(genre.name)"
+            >
+              {{ genre.name }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="flex flex-col gap-y-4">
+        <p class="text-white text-4xl font-bold">Charactors</p>
+        <div class="w-full">
+          <p-carousel
+            class="movie-carousel"
+            [value]="movieDetail()?.credits?.cast?.slice(0, 50) || []"
+            [numVisible]="6"
+            [numScroll]="3"
+            [circular]="true"
+            [autoplayInterval]="6000"
+          >
+            <ng-template let-cast pTemplate="item">
+              <div class="flex flex-col items-center gap-y-2 w-full py-2">
+                <div
+                  class="flex flex-col items-center group size-25 relative aspect-square overflow-hidden rounded-full"
+                >
+                  <p-image
+                    class="block"
+                    [src]="
+                      cast.profile_path
+                        ? 'https://image.tmdb.org/t/p/w500' + cast.profile_path
+                        : 'https://ps.w.org/colorlib-404-customizer/assets/icon-256x256.jpg?rev=1985325'
+                    "
+                    [alt]="cast.character"
+                    [preview]="true"
+                    [appendTo]="'body'"
+                    width="120"
+                    height="120"
+                    [previewImageSrc]="
+                      cast.profile_path
+                        ? 'https://image.tmdb.org/t/p/w185' + cast.profile_path
+                        : 'https://ps.w.org/colorlib-404-customizer/assets/icon-256x256.jpg?rev=1985325'
+                    "
+                    imageClass="size-25 rounded-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-50 cursor-pointer"
+                  />
+                </div>
+                <div class="flex flex-col items-center truncate">
+                  <p class="hover:underline hover:underline-offset-4 hover:cursor-pointer">
+                    {{ cast.name }}
+                  </p>
+                  <p>({{ cast.character }})</p>
+                </div>
+              </div>
+            </ng-template>
+          </p-carousel>
+        </div>
+      </div>
+      <div class="flex flex-col gap-y-4">
+        <p class="text-white text-4xl font-bold">Crews</p>
+        <div class="w-full">
+          <p-carousel
+            class="movie-carousel"
+            [value]="movieDetail()?.credits?.crew?.slice(0, 50) || []"
+            [numVisible]="6"
+            [numScroll]="3"
+            [circular]="true"
+            [autoplayInterval]="6000"
+          >
+            <ng-template let-cast pTemplate="item">
+              <div class="flex flex-col items-center gap-y-2 w-full py-2">
+                <div
+                  class="flex flex-col items-center group size-25 relative aspect-square overflow-hidden rounded-full"
+                >
+                  <p-image
+                    class="block"
+                    [src]="
+                      cast.profile_path
+                        ? 'https://image.tmdb.org/t/p/w500' + cast.profile_path
+                        : 'https://ps.w.org/colorlib-404-customizer/assets/icon-256x256.jpg?rev=1985325'
+                    "
+                    [alt]="cast.character"
+                    [preview]="true"
+                    [appendTo]="'body'"
+                    width="120"
+                    height="120"
+                    [previewImageSrc]="
+                      cast.profile_path
+                        ? 'https://image.tmdb.org/t/p/w185' + cast.profile_path
+                        : 'https://ps.w.org/colorlib-404-customizer/assets/icon-256x256.jpg?rev=1985325'
+                    "
+                    imageClass="size-25 rounded-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-50 cursor-pointer"
+                  />
+                </div>
+                <div class="flex flex-col items-center truncate">
+                  <p class="hover:underline hover:underline-offset-4 hover:cursor-pointer">
+                    {{ cast.name }}
+                  </p>
+                  <p>({{ cast.known_for_department }})</p>
+                </div>
+              </div>
+            </ng-template>
+          </p-carousel>
+        </div>
+      </div>
+      <div class="flex flex-col gap-y-4">
+        <p class="text-white text-4xl font-bold">Suggestion like "{{ movieDetail()?.title }}"</p>
+        <p-carousel
+          class="movie-carousel"
+          [value]="recommendedMovies()"
+          [numVisible]="6"
+          [numScroll]="3"
+          [circular]="true"
+          [autoplayInterval]="6000"
+        >
+          <ng-template let-movie pTemplate="item">
+            <app-movie-card
+              [movie]="movie"
+              (click)="selectRecommendedMovie(movie.id, movie.title)"
+            />
+          </ng-template>
+        </p-carousel>
+      </div>
+    </div>
   </div>
-</div>
+} @else {
+  <div class="min-h-screen bg-slate-950 px-6 py-8">
+    <div class="mb-8 overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+      <p-skeleton height="24rem" class="w-full" />
+    </div>
+    <div class="mb-8 space-y-4">
+      <p-skeleton height="2rem" width="14rem" />
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        @for (_ of [1, 2, 3]; track $index) {
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+            <p-skeleton height="10rem" class="w-full" />
+          </div>
+        }
+      </div>
+    </div>
+    <div class="space-y-4">
+      <p-skeleton height="2rem" width="10rem" />
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+        @for (_ of [1, 2, 3, 4]; track $index) {
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+            <p-skeleton height="12rem" class="w-full" />
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

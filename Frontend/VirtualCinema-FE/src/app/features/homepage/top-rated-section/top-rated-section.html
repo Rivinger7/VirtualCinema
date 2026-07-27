@@ -10,7 +10,10 @@
       [autoplayInterval]="6000"
     >
       <ng-template let-movie pTemplate="item">
-        <app-movie-card [movie]="movie"></app-movie-card>
+        <app-movie-card
+          [movie]="movie"
+          (click)="selectMovie(movie.id, movie.title)"
+        ></app-movie-card>
       </ng-template>
     </p-carousel>
   </div>
