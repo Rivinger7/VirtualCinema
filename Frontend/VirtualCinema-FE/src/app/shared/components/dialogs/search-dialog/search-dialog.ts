@@ -1,5 +1,5 @@
 import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LucideAngularModule, Search } from 'lucide-angular';
@@ -7,6 +7,7 @@ import { MovieService } from '../../../../core/services/Movies/movie-service';
 import { GenresResponse, MovieResultItem, PaginatedResponse } from '@lorenzopant/tmdb';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search-dialog',
@@ -23,7 +24,9 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 export class SearchDialog implements OnInit {
   readonly searchIcon = Search;
 
-  private movieService = inject(MovieService);
+  private readonly movieService = inject(MovieService);
+  private readonly router = inject(Router);
+  private readonly dialogRef = inject(MatDialogRef<SearchDialog>);
 
   popularMovies = signal<PaginatedResponse<MovieResultItem> | null>(null);
   movieGenres = signal<GenresResponse | null>(null);
@@ -79,5 +82,11 @@ export class SearchDialog implements OnInit {
     this.selectedGenreIds.update((ids) =>
       ids.includes(genreId) ? ids.filter((id) => id !== genreId) : [...ids, genreId],
     );
+  }
+
+  selectMovie(id: number, title: string) {
+    const slug = title.toLocaleLowerCase().replaceAll(' ', '-');
+    this.router.navigate(['/movie', id, slug]);
+    this.dialogRef.close();
   }
 }

@@ -1,17 +1,14 @@
-import { Component, computed, inject, Injectable, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { LucideAngularModule, Play, Info } from 'lucide-angular';
 import { MovieService } from '../../../core/services/Movies/movie-service';
 import { signal } from '@angular/core';
-import {
-  MovieAppendToResponseNamespace,
-  MovieDetails,
-  MovieDetailsWithAppends,
-} from '@lorenzopant/tmdb';
+import { MovieAppendToResponseNamespace, MovieDetailsWithAppends } from '@lorenzopant/tmdb';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { TrailerDialog } from '../../../shared/components/dialogs/trailer-dialog/trailer-dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-banner-section',
@@ -24,6 +21,7 @@ export class BannerSection implements OnInit {
 
   private readonly movieService = inject(MovieService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
 
   latestMovie = signal<
     MovieDetailsWithAppends<['images', 'credits', 'recommendations', 'videos']> | undefined
@@ -33,9 +31,11 @@ export class BannerSection implements OnInit {
       (video) => video.site === 'YouTube' && video.type === 'Trailer',
     );
   });
-  private readonly latestMovieId: number = 1368337;
+  readonly latestMovieId: number = 1368337;
+  lastestMovieTitle: string = '';
   async ngOnInit() {
     await this.getLatestMovie(this.latestMovieId);
+    this.lastestMovieTitle = this.latestMovie()!.title;
   }
 
   private async getLatestMovie(movieId: number) {
@@ -58,5 +58,10 @@ export class BannerSection implements OnInit {
       panelClass: 'trailer-dialog',
       data: this.trailer()?.key,
     });
+  }
+
+  selectMovie(id: number, title: string) {
+    const slug = title.toLocaleLowerCase().replaceAll(' ', '-');
+    this.router.navigate(['/movie', id, slug]);
   }
 }

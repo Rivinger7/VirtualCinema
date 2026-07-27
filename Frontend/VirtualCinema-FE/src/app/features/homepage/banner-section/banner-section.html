@@ -36,7 +36,11 @@
         <lucide-icon class="relative fill-white text-white size-4" [img]="playIcon" />
         <span class="text-white font-medium">Watch Trailer</span>
       </button>
-      <button class="border border-sky-500! bg-transparent! px-3! py-1.5!" pButton>
+      <button
+        class="border border-sky-500! bg-transparent! px-3! py-1.5!"
+        pButton
+        (click)="selectMovie(latestMovieId, lastestMovieTitle)"
+      >
         <span class="text-zinc-300 font-medium">More Info</span>
         <lucide-icon class="relative stroke-zinc-300 size-4" [img]="infoIcon"></lucide-icon>
       </button>
