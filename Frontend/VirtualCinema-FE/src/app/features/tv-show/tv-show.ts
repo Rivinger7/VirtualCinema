@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { inject, OnInit } from '@angular/core';
 import { PaginatedResponse, TVSeriesResultItem } from '@lorenzopant/tmdb';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -14,6 +14,7 @@ import { TvShowCard } from '../../shared/components/cards/tv-show-card/tv-show-c
 })
 export class TvShow implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private tvShowService = inject(TVShowService);
 
   tvShows = signal<PaginatedResponse<TVSeriesResultItem> | undefined>(undefined);
@@ -84,5 +85,10 @@ export class TvShow implements OnInit {
     this.currentPage.set((event.page ?? 0) + 1);
 
     await this.loadTVShows();
+  }
+
+  selectTVShow(id: number, title: string) {
+    const slug = title.toLocaleLowerCase().replaceAll(' ', '-');
+    this.router.navigate(['/tv-show', id, slug]);
   }
 }

@@ -27,7 +27,7 @@
     } @else {
       <div class="grid grid-cols-5 gap-4">
         @for (tvShow of tvShows()?.results; track tvShow.id) {
-          <app-tv-show-card [tvShow]="tvShow" />
+          <app-tv-show-card [tvShow]="tvShow" (click)="selectTVShow(tvShow.id, tvShow.name)" />
         }
       </div>
     }

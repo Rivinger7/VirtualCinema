@@ -3,6 +3,7 @@ import { Homepage } from './features/homepage/homepage';
 import { Movie } from './features/movie/movie';
 import { TvShow } from './features/tv-show/tv-show';
 import { MovieDetail } from './features/movie/movie-detail';
+import { TvShowDetail } from './features/tv-show/tv-show-detail';
 
 export const routes: Routes = [
   {
@@ -20,5 +21,9 @@ export const routes: Routes = [
   {
     path: 'movie/:id/:title',
     component: MovieDetail,
+  },
+  {
+    path: 'tv-show/:id/:title',
+    component: TvShowDetail,
   },
 ];
