@@ -1,19 +1,34 @@
-<mat-dialog-content class="rounded-2xl">
+<mat-dialog-content class="rounded-2xl overflow-hidden! max-h-none!">
   <div class="flex items-center rounded-xl border border-zinc-700 px-4 py-3">
     <lucide-icon [img]="searchIcon" class="text-zinc-500 outline-none"></lucide-icon>
     <input
       matInput
+      [formControl]="searchControl"
       placeholder="Search or ask anything"
       class="ml-3 w-full bg-transparent outline-none text-zinc-500"
     />
     <span class="rounded border border-zinc-600 px-2 py-0.5 text-xs text-zinc-400"> Esc </span>
   </div>
-  <div class="px-4 pt-2 text-sm text-zinc-500">Suggestions</div>
+  <div class="mt-4 overflow-x-auto overflow-y-hidden custom-scroll pb-2">
+    <div class="flex flex-row flex-wrap gap-2">
+      @for (genre of movieGenres()?.genres; track genre.id) {
+        <button
+          class="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-300 0 transition-colors whitespace-nowrap"
+          (click)="toggleGenre(genre.id)"
+          [class.bg-cyan-600]="selectedGenreIds().includes(genre.id)"
+          [class.text-white]="selectedGenreIds().includes(genre.id)"
+        >
+          {{ genre.name }}
+        </button>
+      }
+    </div>
+  </div>
+  <div class="px-4 pt-2 text-2xl font-bold text-orange-50">Suggestions</div>
   <p-scrollPanel
     class="max-h-100 overflow-y-auto py-2 text-zinc-500"
-    [style]="{ width: '100%', height: '330px' }"
+    [style]="{ width: '100%', height: '630px' }"
   >
-    @for (movie of popularMovies()?.results; track movie) {
+    @for (movie of filteredMovies(); track movie) {
       <div
         class="flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-zinc-800 transition-all duration-200"
       >
@@ -22,7 +37,7 @@
           [alt]="movie.title"
           class="w-8 h-auto rounded object-cover"
         />
-        <span>{{ movie.title }}</span>
+        <span class="text-xl font-medium">{{ movie.title }}</span>
       </div>
     }
   </p-scrollPanel>

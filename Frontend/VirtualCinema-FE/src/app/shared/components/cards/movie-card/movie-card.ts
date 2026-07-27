@@ -10,7 +10,10 @@ import { LucideAngularModule, Play } from 'lucide-angular';
   templateUrl: './movie-card.html',
 })
 export class MovieCard {
-  movie = input.required<MovieResultItem>();
+  movie =
+    input.required<
+      Pick<MovieResultItem, 'id' | 'title' | 'poster_path' | 'backdrop_path' | 'vote_average'>
+    >();
 
   playIcon = Play;
 }

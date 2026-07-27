@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { tmdb } from '../../../core/providers/tmdb';
-import { MovieDetails, MovieImages } from '@lorenzopant/tmdb';
+import {
+  MovieAppendToResponseNamespace,
+  MovieDetails,
+  MovieDetailsWithAppends,
+} from '@lorenzopant/tmdb';
+import { SearchMovieRequest } from '../../../shared/models/movies/search-movie-request';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +17,17 @@ export class MovieService {
 
   async getMovieDetails(movieId: number): Promise<MovieDetails> {
     return await tmdb.movies.details({ movie_id: movieId });
+  }
+  async getMovieDetailsWithAppendResponseNamespace<
+    AppendResponses extends MovieAppendToResponseNamespace[],
+  >(
+    movieId: number,
+    appendResponse: AppendResponses,
+  ): Promise<MovieDetailsWithAppends<AppendResponses>> {
+    return (await tmdb.movies.details({
+      movie_id: movieId,
+      append_to_response: appendResponse,
+    })) as MovieDetailsWithAppends<AppendResponses>;
   }
 
   async getImages(movieId: number) {
@@ -50,6 +66,16 @@ export class MovieService {
     return await tmdb.discover.movie({
       with_genres: genreId,
       page,
+    });
+  }
+
+  async searchMovieByTitle(searchMovieRequest: SearchMovieRequest) {
+    return await tmdb.search.movies({
+      query: searchMovieRequest.querry,
+      language: searchMovieRequest.language,
+      region: searchMovieRequest.region,
+      year: searchMovieRequest.year,
+      page: (searchMovieRequest.page = 1),
     });
   }
 }

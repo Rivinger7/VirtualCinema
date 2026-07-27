@@ -1,5 +1,5 @@
 import { Component, input, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { inject, OnInit } from '@angular/core';
 import { MovieResultItem, PaginatedResponse } from '@lorenzopant/tmdb';
 import { MovieService } from '../../core/services/Movies/movie-service';
@@ -14,6 +14,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 export class Movie implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private movieService = inject(MovieService);
+  private readonly router = inject(Router);
 
   movies = signal<PaginatedResponse<MovieResultItem> | undefined>(undefined);
 
@@ -28,7 +29,6 @@ export class Movie implements OnInit {
       const genreSlug = params.get('genre');
 
       if (!genreSlug) {
-        console.log('No genre slug');
         return;
       }
 
@@ -37,7 +37,6 @@ export class Movie implements OnInit {
       const genreId = await this.getGenreIdFromSlug(genreSlug);
 
       if (!genreId) {
-        console.log('No genre id');
         return;
       }
 
@@ -46,8 +45,6 @@ export class Movie implements OnInit {
       const movies = await this.movieService.getMoviesByGenre(genreId);
 
       this.movies.set(movies);
-
-      console.log(movies);
     });
   }
   private async getGenreIdFromSlug(slug: string) {
@@ -74,5 +71,10 @@ export class Movie implements OnInit {
     this.currentPage.set((event.page ?? 0) + 1);
 
     await this.loadMovies();
+  }
+
+  selectMovie(id: number, title: string) {
+    const slug = title.toLocaleLowerCase().replaceAll(' ', '-');
+    this.router.navigate(['/movie', id, slug]);
   }
 }
